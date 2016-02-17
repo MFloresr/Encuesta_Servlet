@@ -10,24 +10,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@WebServlet(name= "encuesta",urlPatterns = {"/encuesta"})
+@WebServlet("/encuesta")
 public class App extends HttpServlet{
     private static final long serialVersionUID = 1L;
-    Map<String, Integer> contadorFormulario = new HashMap<String, Integer>();
+    private Map<String, Integer> bebidas= new HashMap<String, Integer>();
+
+    public App(){
+        super();
+    }
+
     public void init(ServletConfig conf) throws ServletException {
-        super.init(conf);
-        Map<String, Integer> ContadorFormulario = new HashMap<String, Integer>();
+        conf.getServletContext().setAttribute("bebidas",bebidas);
+        super.init();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ServletContext sc = getServletContext();
-        Object scAttribute = sc.getAttribute(String.valueOf(contadorFormulario));
-        sc.setAttribute("attribute", "value");
 
+        int veces=0;
 
-        String x =request.getParameter("bebida");
-        System.out.println(x);
-        doGet(request, response);
+        String bebidaselecionada=request.getParameter("bebida");
+        if(bebidas.containsKey(bebidaselecionada)){
+            veces=bebidas.get(bebidaselecionada);
+        }
+        bebidas.put(bebidaselecionada, veces+1);
+        request.getRequestDispatcher("Resultado_Servlet").forward(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
